@@ -37,7 +37,7 @@ useEffect(()=>{
 })
 
   return (
-    <div className="text-4xl text-center font-thin">
+    <div className="lg:text-4xl text-2xl text-center lg:rotate-0 rotate-270">
       <span className = "split flex justify-center items-center">Hey, I&apos;m working on my site right now.</span>
       <span className="split flex justify-center items-center">Hit me up: @chrispanicker chris@panicker.design</span>
     </div>
