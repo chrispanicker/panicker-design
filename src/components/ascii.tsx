@@ -3,21 +3,25 @@
 import { useEffect } from "react"
 
 export const Ascii = () =>{
-let valArray = [".", ".", "=", "÷", "*"];
+const valArray = [".", ".", "=", "÷", "*"];
 
 useEffect(()=>{
-  let allText = document.querySelectorAll(".split");
+  const allText = document.querySelectorAll(".split");
   allText.forEach((txtEl, i)=>{
-    let str = txtEl.innerHTML;
-    let strArray = str.split("");
+    const str = txtEl.innerHTML;
+    const strArray = str.split("");
     txtEl.innerHTML = ""
-    strArray.forEach((ltr, j)=>{
-      ltr === " "? ltr = "&nbsp;" : "";
-      let newEl = document.createElement("p");
+    strArray.forEach((ltr)=>{
+      if(ltr === " "){ 
+          ltr = "&nbsp;" 
+      }else{ 
+        ltr = ltr
+      }
+      const newEl = document.createElement("p");
       newEl.innerHTML = ltr;
-      newEl.addEventListener("mouseover", (event)=>{
+      newEl.addEventListener("mouseover", ()=>{
         let i =0; 
-        let int = setInterval(()=>{
+        const int = setInterval(()=>{
           newEl.innerHTML = valArray[i]
           if(i<valArray.length){ 
             i++
@@ -34,7 +38,7 @@ useEffect(()=>{
 
   return (
     <div className="text-4xl text-center font-thin">
-      <span className = "split flex justify-center items-center">Hey, I'm working on my site right now.</span>
+      <span className = "split flex justify-center items-center">Hey, I&apos;m working on my site right now.</span>
       <span className="split flex justify-center items-center">Hit me up: @chrispanicker chris@panicker.design</span>
     </div>
   )
