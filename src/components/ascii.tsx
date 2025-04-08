@@ -39,7 +39,7 @@ useEffect(()=>{
   return (
     <div className="lg:text-5xl text-xl text-center lg:rotate-0 rotate-[-45deg] transition-[transform(rotate), font-size] duration-1000">
       <span className = {`${splitClass}`}>oh...this is awkward</span>
-      <span className = {`${splitClass}`}>i'm working on my site right now</span>
+      <span className = {`${splitClass}`}>i&apos;m working on my site right now</span>
       <span className = {`${splitClass}`}>@chrispanicker ~ chris@panicker.design</span>
     </div>
   )

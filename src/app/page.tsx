@@ -1,11 +1,10 @@
 import { Ascii } from "@/components/ascii";
-import { Fragment_Mono } from "next/font/google";
-
-const fragmentMono = Fragment_Mono({
-  variable: "--font-fragment-mono",
-  weight: "400",
-  subsets: ["latin"],
-});
+// import { Fragment_Mono } from "next/font/google";
+// const fragmentMono = Fragment_Mono({
+//   variable: "--font-fragment-mono",
+//   weight: "400",
+//   subsets: ["latin"],
+// });
 
 export default function Home() {
   return (
