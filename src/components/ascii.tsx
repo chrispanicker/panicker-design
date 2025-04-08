@@ -37,9 +37,10 @@ useEffect(()=>{
 })
 
   return (
-    <div className="lg:text-4xl text-2xl text-center lg:rotate-0 rotate-270">
-      <span className = "split flex justify-center items-center">Hey, I&apos;m working on my site right now.</span>
-      <span className="split flex justify-center items-center">Hit me up: @chrispanicker chris@panicker.design</span>
+    <div className="lg:text-5xl text-xl text-center lg:rotate-0 rotate-[-45deg] transition-[transform(rotate), font-size] duration-1000">
+      <span className = "split flex justify-center items-center">oh...this is awkward</span>
+      <span className = "split flex justify-center items-center">i'm working on my site right now</span>
+      <span className="split flex justify-center items-center">@chrispanicker ~ chris@panicker.design</span>
     </div>
   )
 }

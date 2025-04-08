@@ -9,7 +9,7 @@ const fragmentMono = Fragment_Mono({
 
 export default function Home() {
   return (
-    <div className={`w-screen h-screen flex justify-center items-center uppercase tracking-[-.1rem] ${fragmentMono.className}`}>
+    <div className={`w-screen h-screen flex justify-center items-center tracking-[-.1rem]}`}>
       <Ascii />
     </div>
   );
