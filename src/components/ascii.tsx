@@ -1,46 +1,83 @@
-'use client'
+"use client"
 
-import { useEffect } from "react"
+import { useEffect, useRef } from "react"
 
-export const Ascii = () =>{
-const valArray = [".", ".", "=", "÷", "*"];
+interface AsciiTextProps {
+  text: string
+  className?: string
+}
 
-useEffect(()=>{
-  const allText = document.querySelectorAll(".split");
-  allText.forEach((txtEl, i)=>{
-    const str = txtEl.innerHTML;
-    const strArray = str.split("");
-    txtEl.innerHTML = ""
-    strArray.forEach((ltr)=>{
-      if(ltr === " "){ 
-          ltr = "&nbsp;" 
-      }else{ 
-        ltr = ltr
+export const splitClass = "split flex justify-start items-start bg-black px-2 w-fit hover:bg-blue-500"
+
+export const AsciiText = ({ text, className = "" }: AsciiTextProps) => {
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (typeof window === "undefined") return
+
+    const container = containerRef.current
+    if (!container) return
+
+    container.innerHTML = ""
+
+    const valArray = [".", ".", "=", "÷", "*"]
+    const animationDuration = 200 * valArray.length // Total duration of one cycle
+
+    const characters = text.split("")
+    characters.forEach((char) => {
+      const charElement = document.createElement("span")
+      charElement.className = "ascii-char"
+      charElement.textContent = char === " " ? "\u00A0" : char
+
+      // Use a ref to store the interval ID and original character
+      const animationRef = {
+        intervalId: 0,
+        originalChar: char === " " ? "\u00A0" : char,
       }
-      const newEl = document.createElement("p");
-      newEl.innerHTML = ltr;
-      newEl.addEventListener("mouseover", ()=>{
-        let i =0; 
-        const int = setInterval(()=>{
-          newEl.innerHTML = valArray[i]
-          if(i<valArray.length){ 
+
+      const startAnimation = () => {
+        // Clear existing interval if it's running
+        if (animationRef.intervalId) {
+          clearInterval(animationRef.intervalId)
+        }
+
+        let i = 0
+        animationRef.intervalId = window.setInterval(() => {
+          charElement.textContent = valArray[i]
+          if (i < valArray.length - 1) {
             i++
-          }else{ 
-            clearInterval(int);
-            newEl.innerHTML = ltr;
-            }
-        },200)
-      })
-      allText[i].append(newEl)
+          } else {
+            // End of cycle, restore original character
+            clearInterval(animationRef.intervalId)
+            charElement.textContent = animationRef.originalChar
+            animationRef.intervalId = 0
+          }
+        }, 200)
+
+        // Ensure we stop the interval after the full duration
+        setTimeout(() => {
+          if (animationRef.intervalId) {
+            clearInterval(animationRef.intervalId)
+            charElement.textContent = animationRef.originalChar
+            animationRef.intervalId = 0
+          }
+        }, animationDuration)
+      }
+
+      charElement.addEventListener("mouseover", startAnimation)
+
+      container.appendChild(charElement)
     })
-  })
-})
-  const splitClass = "split flex justify-center items-center"
-  return (
-    <div className="lg:text-5xl text-xl text-center lg:rotate-0 rotate-[-45deg] transition-[transform(rotate), font-size] duration-1000">
-      <span className = {`${splitClass}`}>oh...this is awkward</span>
-      <span className = {`${splitClass}`}>i&apos;m working on my site right now</span>
-      <span className = {`${splitClass}`}>@chrispanicker ~ chris@panicker.design</span>
-    </div>
-  )
+
+    return () => {
+      if (container) {
+        const elements = container.querySelectorAll(".ascii-char")
+        elements.forEach((el) => {
+          el.replaceWith(el.cloneNode(true))
+        })
+      }
+    }
+  }, [text])
+
+  return <div ref={containerRef} className={`split ${className}`}></div>
 }
