@@ -51,13 +51,6 @@ export const CustomFoot = ({projects}: Props) =>{
             <AsciiText className={`${splitClass}`} text = "chris@panicker.design" /> 
         </div>
       </div>
-
-
-      {/* menu bar */}
-      {/* <span className={`${splitClass} absolute ${negTop} left-[50vw]`} onClick={()=>{
-        window.scrollTo({top: window.scrollY<60? window.innerHeight: 0, left:0, behavior: "smooth"})
-      }}>Info</span> */}
-
       <div className={`${negTop} left-5  absolute flex justify-between items-center`}>
           <AsciiText className={`${splitClass} justify-self-center`} text="Chris Panicker" />
       </div>
