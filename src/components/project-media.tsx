@@ -20,14 +20,14 @@ export const ProjectMedia = ({projects}:Props) =>{
   return(        
     project.preview.desktopUrl.includes(".mp4")?
     <div key={project._id}>
-      <video width="1920" height="1080" autoPlay muted loop className={`lg:block hidden ${mediaClass}`}    
+      <video width="1920" height="1080" autoPlay muted playsInline loop className={`lg:block hidden ${mediaClass}`}    
       onLoadedData={(e)=>{
         replaceClass(e);
     }}>
         <source src={project.preview.desktopUrl} type="video/mp4" />
         Your browser does not support the video tag.
       </video>
-      <video width="1920" height="1080" autoPlay muted loop className={`lg:hidden block ${mediaClass}`}    
+      <video width="1920" height="1080" autoPlay muted loop playsInline className={`lg:hidden block ${mediaClass}`}    
       onLoadedData={(e)=>{
         replaceClass(e)
       }}>

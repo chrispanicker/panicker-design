@@ -24,3 +24,14 @@ export async function getProjects() {
       `
   );
 }
+
+export async function getProjectBySlug(slug: string) {
+  return client.fetch(
+    groq`*[_type == "project" && slug == ${slug}][0]{
+      _id,
+      name,
+      slug,
+    }`,
+    { slug }
+  );
+}
