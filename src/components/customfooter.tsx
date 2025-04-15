@@ -51,7 +51,9 @@ export const CustomFoot = ({projects}: Props) =>{
             <AsciiText className={`${splitClass}`} text = "chris@panicker.design" /> 
         </div>
       </div>
-      <div className={`${negTop} left-5  absolute flex justify-between items-center`}>
+      <div className={`${negTop} left-5  absolute flex justify-between items-center`} onClick={()=>{
+        window.scrollTo({top:window.innerHeight, behavior:'smooth'})
+      }}>
           <AsciiText className={`${splitClass} justify-self-center`} text="Chris Panicker" />
       </div>
     </footer>

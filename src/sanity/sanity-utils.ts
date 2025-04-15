@@ -29,7 +29,7 @@ export async function getProjectBySlug(slug: string) {
   return client.fetch(
     groq`*[_type == "project" && slug == ${slug}][0]{
       _id,
-      name,
+      name
       slug,
     }`,
     { slug }
