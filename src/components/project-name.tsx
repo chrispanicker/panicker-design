@@ -46,10 +46,6 @@ export function ProjectName({ projects }: Props) {
   //   });
   // })
 
-
-
-
-
   return(
     <section id="proj-description" className="z-[10] fixed lg:bottom-0 lg:top-auto top-0 left-0 w-full h-max flex flex-col lg:justify-end justify-start items-start py-5 px-5 pointer-events-none">
       <div className={`lg:flex hidden snap-end w-1/2 overflow-hidden transition-all duration-300 ${descOpen ? "opacity-100 blur-none" : "opacity-0 blur-2xl"}`}>        

@@ -35,7 +35,7 @@ export const ProjectMedia = forwardRef<ProjectMediaHandle, Props>(({projects, me
   const searchParams = useSearchParams();
   const p = searchParams.get('p')? +searchParams.get('p')! : 0;
   const project = projects[p];
-    const [isFading, setIsFading] = useState(false);
+    const [isFading, setIsFading] = useState(true);
     ProjectMedia.displayName = "ProjectMedia";
   const [isBlurry, setIsBlurry] = useState(true);
   
@@ -57,8 +57,15 @@ export const ProjectMedia = forwardRef<ProjectMediaHandle, Props>(({projects, me
         }
       }
 
-      if(scrollRef?.current && scrollRef.current.scrollLeft + scrollRef.current.clientWidth >= scrollRef.current.scrollWidth) {}
-      
+      if (project.gallery && Array.isArray(project.gallery)) {
+        if(scrollRef.current!.scrollLeft === 0 && e.key === "ArrowLeft"){
+          router.push(`./?p=${projects[p-1]!=null? p-1: projects.length-1}`, {scroll:false});
+        }
+        if(scrollRef.current!.scrollLeft > scrollRef.current!.scrollWidth-scrollRef.current!.clientWidth-10 && e.key === "ArrowRight"){
+          router.push(`./?p=${projects[p+1]!=null? p+1: 0}`, {scroll:false});
+        }
+      }
+
     };
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
@@ -67,11 +74,12 @@ export const ProjectMedia = forwardRef<ProjectMediaHandle, Props>(({projects, me
     useEffect(()=>{
     //LR arrow keys slide the media gallery  L / R
     const handleKeyDown = (e: KeyboardEvent) => {
-      console.log("key pressed:", e.key, "useGallery:", project.useGallery, "ref:", scrollRef?.current);
       if (!project.useGallery) {
         if (e.key === "ArrowRight") {
-          console.log("going to next project");
           router.push(`./?p=${projects[p+1]!=null? p+1: 0}`, {scroll:false});
+        }
+        if (e.key === "ArrowLeft") {
+          router.push(`./?p=${projects[p-1]!=null? p-1: projects.length-1}`, {scroll:false});
         }
       }
     };

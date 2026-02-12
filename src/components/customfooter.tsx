@@ -28,8 +28,13 @@ export const CustomFoot = () =>{
   useEffect(()=>{
     const handleKeyDown = (e: KeyboardEvent) => {
       //up arrow scrolls to top, down arrow scrolls to bottom
+
+    if(["Space","ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].indexOf(e.code) > -1) {
+        e.preventDefault();
+    }
+
       if (e.key === "ArrowDown" || e.key === "ArrowUp") {
-        if (window.scrollY < 1000) {
+        if (window.scrollY < 100) {
           window.scrollTo({top: window.innerHeight, behavior: 'smooth'});
         } else {
           window.scrollTo({top: 0, behavior: 'smooth'});
@@ -65,8 +70,8 @@ export const CustomFoot = () =>{
           <AsciiText className={`${splitClass}`} text = "I am a senior designer for" />
           <AsciiText className={`${splitClass}`} text = "Pitchfork and GQ." />
           <br></br>
-          <AsciiText className={`${splitClass}`} text = "@chrispanicker" />
-          <AsciiText className={`${splitClass}`} text = "chris@panicker.design" />
+          <a className="self-end justify-items-end flex" target="_blank" rel="noopener noreferrer" href="https://www.instagram.com/chrispanicker/"><AsciiText className={`${splitClass}`} text = "@chrispanicker" /></a>
+          <a className="self-end justify-items-end flex" target="_blank" rel="noopener noreferrer" href="mailto:chris@panicker.design"><AsciiText className={`${splitClass}`} text = "chris@panicker.design" /></a>
         </div>
       </section>
     </>
