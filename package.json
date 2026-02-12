@@ -12,11 +12,12 @@
     "@sanity/image-url": "^1.1.0",
     "@sanity/orderable-document-list": "^1.3.4",
     "@sanity/vision": "^3.81.0",
-    "next": "15.2.4",
-    "next-sanity": "^9.9.6",
+    "next": "^16.1.6",
+    "next-sanity": "^12.1.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-icons": "^5.5.0",
+    "react-is": "^19.2.4",
     "sanity": "^3.81.0",
     "styled-components": "^6.1.16"
   },
@@ -30,5 +31,8 @@
     "eslint-config-next": "15.2.4",
     "tailwindcss": "^4",
     "typescript": "^5"
+  },
+  "resolutions": {
+    "@sanity/client": "^3.0.0"
   }
 }
