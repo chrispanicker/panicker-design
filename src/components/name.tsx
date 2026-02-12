@@ -1,10 +1,7 @@
 'use client'
-import { useSearchParams } from "next/navigation";
 import { AsciiText, splitClass } from "./ascii"
 
-export function Name ({projects}: any){
-  const searchParams = useSearchParams();
-  const p = searchParams.get('p')? +searchParams.get('p')! : 0;
+export function Name (){
   return(
    <div className={`flex justify-between items-center z-[1000] fixed left-0 lg:top-0 lg:bottom-auto bottom-10`} onClick={()=>{
       if(window.scrollY > 100){

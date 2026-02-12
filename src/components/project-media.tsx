@@ -5,10 +5,22 @@ import Image from "next/image"
 import { urlFor } from "@/sanity/lib/image";
 import { getFileUrl } from "@/sanity/lib/file";
 import { useSearchParams } from "next/navigation";
-import { forwardRef, useImperativeHandle, useRef, useState } from "react";
+import { forwardRef, useImperativeHandle, useState } from "react";
+
+
+interface Project {
+  _id: string;
+  useGallery?: boolean;
+  gallery?: unknown[];
+  preview: {
+    desktopUrl?: string;
+    mobileUrl?: string;
+  };
+  [key: string]: unknown;
+}
 
 interface Props {
-  projects: any;
+  projects: Project[];
   mediaScrollDivRef?: React.RefObject<HTMLDivElement>;
 }
 
@@ -20,9 +32,9 @@ export const ProjectMedia = forwardRef<ProjectMediaHandle, Props>(({projects, me
   const searchParams = useSearchParams();
   const p = searchParams.get('p')? +searchParams.get('p')! : 0;
   const project = projects[p];
-  const [isFading, setIsFading] = useState(false);
+    const [isFading, setIsFading] = useState(false);
+    ProjectMedia.displayName = "ProjectMedia";
   const [isBlurry, setIsBlurry] = useState(false);
-  const fadeTimeout = useRef<NodeJS.Timeout|null>(null);
 
   useImperativeHandle(ref, () => ({
     triggerFadeOut: () => {
@@ -33,14 +45,13 @@ export const ProjectMedia = forwardRef<ProjectMediaHandle, Props>(({projects, me
 
   // When project changes, reset fade/blurry
   // Unblur when content is loaded
-  const handleMediaLoaded = (e: any) => {
+  const handleMediaLoaded = (e: React.SyntheticEvent<HTMLVideoElement | HTMLImageElement>) => {
     setIsFading(false);
     setIsBlurry(false);
     // Remove blur-2xl if present
     e.currentTarget.classList.replace("blur-2xl", "blur-none");
   };
 
-  // Compose classes
   const mediaClass = `max-w-[90vw] lg:max-h-[90vh] max-h-[50vh] h-auto z-0 transition-all duration-300 odd:self-end even:self-start ${isFading ? 'opacity-0' : 'opacity-100'} ${isBlurry ? 'blur-2xl' : 'blur-none'}`;
   if (project.useGallery && Array.isArray(project.gallery) && project.gallery.length > 0) {
     // Render gallery (show all items stacked, or you can implement a slider if desired)
@@ -52,40 +63,53 @@ export const ProjectMedia = forwardRef<ProjectMediaHandle, Props>(({projects, me
         style={{ WebkitOverflowScrolling: 'touch' }}
 
       >
-        {project.gallery.map((media: any, idx: number) => {
-          if (media?.desktopMedia?.video?.asset?._ref || (media?.desktopMedia?.video && media?.desktopMedia?.video.asset)) {
-            // Video (Sanity file asset)
-            const videoUrl = getFileUrl(media.desktopMedia.video);
-            return (
-              <video
-                key={idx}
-                width="1920"
-                height="1080"
-                autoPlay
-                muted
-                playsInline
-                loop
-                className={`${mediaClass} snap-center `}
-                onLoadedData={handleMediaLoaded}
-                style={{ objectFit: 'contain' }}
-              >
-                {videoUrl && <source src={videoUrl} type="video/mp4" />}
-                Your browser does not support the video tag.
-              </video>
-            );
-          } else if (media?.desktopMedia?.image?.asset) {
-            // Image (Sanity asset reference)
-            return (
-              <Image
-                key={idx}
-                alt=""
-                src={urlFor(media.desktopMedia.image).url()}
-                width={1920}
-                height={1080}
-                className={`${mediaClass} object-contain snap-center `}
-                onLoad={handleMediaLoaded}
-              />
-            );
+        {project.gallery.map((media: unknown, idx: number) => {
+          // Type guard for expected media shape
+          if (
+            typeof media === 'object' && media !== null &&
+            'desktopMedia' in media &&
+            typeof (media as any).desktopMedia === 'object' && (media as any).desktopMedia !== null
+          ) {
+            const m = media as {
+              desktopMedia: {
+                video?: { asset?: { _ref?: string } };
+                image?: { asset?: unknown };
+              }
+            };
+            if (m.desktopMedia.video?.asset?._ref || (m.desktopMedia.video && m.desktopMedia.video.asset)) {
+              // Video (Sanity file asset)
+              const videoUrl = getFileUrl(m.desktopMedia.video);
+              return (
+                <video
+                  key={idx}
+                  width="1920"
+                  height="1080"
+                  autoPlay
+                  muted
+                  playsInline
+                  loop
+                  className={`${mediaClass} snap-center `}
+                  onLoadedData={handleMediaLoaded}
+                  style={{ objectFit: 'contain' }}
+                >
+                  {videoUrl && <source src={videoUrl} type="video/mp4" />}
+                  Your browser does not support the video tag.
+                </video>
+              );
+            } else if (m.desktopMedia.image?.asset) {
+              // Image (Sanity asset reference)
+              return (
+                <Image
+                  key={idx}
+                  alt=""
+                  src={urlFor(m.desktopMedia.image).url()}
+                  width={1920}
+                  height={1080}
+                  className={`${mediaClass} object-contain snap-center `}
+                  onLoad={handleMediaLoaded}
+                />
+              );
+            }
           }
           return null;
         })}
@@ -111,10 +135,10 @@ export const ProjectMedia = forwardRef<ProjectMediaHandle, Props>(({projects, me
       </div>
     : <div key={project._id} className="pointer-events-none">
         {/* IMAGES for both mobile and desktop */}
-        <Image alt="" src={project.preview.desktopUrl} width="1920" height="1080" className={`lg:block hidden w-screen h-screen object-contain`}
+        <Image alt="" src={project.preview.desktopUrl || ""} width="1920" height="1080" className={`lg:block hidden w-screen h-screen object-contain`}
           onLoad={handleMediaLoaded}
         />
-        <Image alt="" src={project.preview.mobileUrl} width="1920" height="1080" className={`lg:hidden block w-screen h-screen object-contain`}
+        <Image alt="" src={project.preview.mobileUrl || ""} width="1920" height="1080" className={`lg:hidden block w-screen h-screen object-contain`}
           onLoad={handleMediaLoaded}
         />
       </div>

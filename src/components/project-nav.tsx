@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 'use client'
-import { useRouter, useSearchParams } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { AsciiText, splitClass } from "./ascii"
-import { use, useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 
 interface Props {
   projects: any
@@ -14,10 +14,9 @@ interface Props {
 export const ProjectNav = ({projects}:Props) =>{
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const searchParams = useSearchParams();
-  const p = searchParams.get('p')? +searchParams.get('p')! : 0;
+  // const searchParams = useSearchParams();
+  // const p = searchParams.get('p')? +searchParams.get('p')! : 0;
   const router = useRouter();
-  const project = projects[p];
 
   useEffect(()=>{
     if (!dropdownOpen) return;

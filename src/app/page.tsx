@@ -13,20 +13,25 @@ export default async function Home() {
 
   return (
     <>
-    <Name projects={projects} />
+    <Name />
+
 
       <div className="pointer-events-none">
         <ProjectNav projects={projects} />
-        <ProjectName projects={projects} />
+        <Suspense>
+          <ProjectName projects={projects} />
+        </Suspense>
       </div>
 
       <div className="fixed top-0">
-        <ProjectMedia projects={projects} />
+        <Suspense>
+          <ProjectMedia projects={projects} />
+        </Suspense>
       </div>
 
 
       <div className="block w-full h-screen pointer-events-auto snap-end snap-always overscroll-none">
-        <CustomFoot projects={projects} />
+        <CustomFoot/>
       </div>
 
   </>

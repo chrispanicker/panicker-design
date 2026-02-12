@@ -1,22 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 'use client'
 
 import { useEffect, useRef, useState } from "react"
 import { AsciiText, splitClass } from "./ascii";
-import { useRouter, useSearchParams } from "next/navigation";
-import { set } from "sanity";
 
-interface Props {
-  projects: any
-}
-
-export const CustomFoot = ({projects}: Props) =>{
-  const negTop = "lg:top-[-5.8rem] top-[-4rem]"
-  const searchParams = useSearchParams();
-  const p = searchParams.get('p')? +searchParams.get('p')! : 0;
-  const router = useRouter();
-  const project = projects[p];
+export const CustomFoot = () =>{
 
   const [descOpen, setDescOpen] = useState(false);
   const descRef = useRef<HTMLDivElement>(null);

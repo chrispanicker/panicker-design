@@ -3,7 +3,17 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { AsciiText, splitClass } from "./ascii"
 import { useEffect, useRef, useState } from "react";
 
-export function ProjectName ({projects}: any){
+
+
+interface Project {
+  [key: string]: unknown;
+}
+
+interface Props {
+  projects: Project[];
+}
+
+export function ProjectName({ projects }: Props) {
   const searchParams = useSearchParams();
   const p = searchParams.get('p')? +searchParams.get('p')! : 0;
   const project = projects[p];
@@ -35,7 +45,7 @@ export function ProjectName ({projects}: any){
   return(
     <section id="proj-description" className="z-[10] fixed lg:bottom-0 lg:top-auto top-0 left-0 w-full h-max flex flex-col lg:justify-end justify-start items-start py-5 px-5 pointer-events-none">
       <div className={`lg:flex hidden snap-end w-1/2 overflow-hidden transition-all duration-300 ${descOpen ? "opacity-100 blur-none" : "opacity-0 blur-2xl"}`}>        
-        <p className={`p-5 pointer-events-auto bg-black`}>{project.description}</p>
+        <p className={`p-5 pointer-events-auto bg-black`}>{String(project.description ?? "")}</p>
       </div>
 
       <div className="pointer-events-auto cursor-pointer h-fit flex" onClick={() => setDescOpen(!descOpen)}>
@@ -51,7 +61,7 @@ export function ProjectName ({projects}: any){
       </div>
 
       <div className={`flex lg:hidden snap-end w-1/2 overflow-hidden transition-all duration-300 ${descOpen ? "opacity-100 blur-none" : "opacity-0 blur-2xl"}`}>        
-        <p className={`p-5 pointer-events-auto bg-black`}>{project.description}</p>
+        <p className={`p-5 pointer-events-auto bg-black`}>{String(project.description ?? "")}</p>
       </div>
     </section>
   )
