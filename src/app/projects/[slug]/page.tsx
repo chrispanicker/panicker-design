@@ -6,6 +6,7 @@ export default async function Project(){
   // const project = await getProjectBySlug(slug);
 
   return <div>
+    TESTING!
     {/* {xsproject.name} */}
   </div>
 }

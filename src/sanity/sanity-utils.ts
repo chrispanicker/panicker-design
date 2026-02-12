@@ -9,6 +9,7 @@ export async function getProjects() {
       name,
       "slug": slug.current,
       layout,
+      description,
       preview {
         assetType,
         "desktopUrl": select(
@@ -19,10 +20,10 @@ export async function getProjects() {
           mobileMedia.image.asset->url != null => mobileMedia.image.asset->url,
           mobileMedia.video.asset->url
         )
-      }
-  }
-      `
-  );
+      },
+      useGallery,
+      gallery,
+  }`); 
 }
 
 export async function getProjectBySlug(slug: string) {
@@ -31,7 +32,7 @@ export async function getProjectBySlug(slug: string) {
       _id,
       name
       slug,
-    }`,
+    }`, 
     { slug }
   );
 }

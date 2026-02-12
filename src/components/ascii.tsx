@@ -54,7 +54,7 @@ export const AsciiText = ({ text, className = "" }: AsciiTextProps) => {
           }
         }, 200)
 
-        // Ensure we stop the interval after the full duration
+        // Ensure it stops the interval after the full duration
         setTimeout(() => {
           if (animationRef.intervalId) {
             clearInterval(animationRef.intervalId)

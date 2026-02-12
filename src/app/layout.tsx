@@ -12,8 +12,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="">
-      <body className="lg:text-[3rem] text-[1.5rem] cursor-crosshair">
+    <html lang="en" className="overscroll-none">
+      <body className="lg:text-[3rem] text-[1.5rem] cursor-crosshair scroll-smooth overflow-y-scroll snap-y snap-mandatory overscroll-none">
         {children}
       </body>
     </html>
