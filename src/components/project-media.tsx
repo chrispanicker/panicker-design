@@ -4,8 +4,8 @@
 import Image from "next/image"
 import { urlFor } from "@/sanity/lib/image";
 import { getFileUrl } from "@/sanity/lib/file";
-import { useSearchParams } from "next/navigation";
-import { forwardRef, useImperativeHandle, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 
 
 interface Project {
@@ -28,13 +28,56 @@ export interface ProjectMediaHandle {
   triggerFadeOut: () => void;
 }
 
+
+
 export const ProjectMedia = forwardRef<ProjectMediaHandle, Props>(({projects, mediaScrollDivRef}, ref) => {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const p = searchParams.get('p')? +searchParams.get('p')! : 0;
   const project = projects[p];
     const [isFading, setIsFading] = useState(false);
     ProjectMedia.displayName = "ProjectMedia";
-  const [isBlurry, setIsBlurry] = useState(false);
+  const [isBlurry, setIsBlurry] = useState(true);
+  
+  // Fallback ref if not provided from parent
+  const fallbackRef = useRef<HTMLDivElement>(null);
+  const scrollRef = mediaScrollDivRef || fallbackRef;
+
+  useEffect(()=>{
+    //LR arrow keys slide the media gallery  L / R
+    const handleKeyDown = (e: KeyboardEvent) => {
+      console.log("key pressed:", e.key, "useGallery:", project.useGallery, "ref:", scrollRef?.current);
+      if (project.useGallery && scrollRef?.current) {
+        if (e.key === "ArrowRight") {
+          console.log("scrolling right");
+          scrollRef.current.scrollBy({ left: 100, behavior: 'smooth' });
+        } else if (e.key === "ArrowLeft") {
+          console.log("scrolling left");
+          scrollRef.current.scrollBy({ left: -100, behavior: 'smooth' });
+        }
+      }
+
+      if(scrollRef?.current && scrollRef.current.scrollLeft + scrollRef.current.clientWidth >= scrollRef.current.scrollWidth) {}
+      
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [project, scrollRef]);
+
+    useEffect(()=>{
+    //LR arrow keys slide the media gallery  L / R
+    const handleKeyDown = (e: KeyboardEvent) => {
+      console.log("key pressed:", e.key, "useGallery:", project.useGallery, "ref:", scrollRef?.current);
+      if (!project.useGallery) {
+        if (e.key === "ArrowRight") {
+          console.log("going to next project");
+          router.push(`./?p=${projects[p+1]!=null? p+1: 0}`, {scroll:false});
+        }
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  });
 
   useImperativeHandle(ref, () => ({
     triggerFadeOut: () => {
@@ -57,8 +100,9 @@ export const ProjectMedia = forwardRef<ProjectMediaHandle, Props>(({projects, me
     // Render gallery (show all items stacked, or you can implement a slider if desired)
     return (
       <div
+      id="proj-media"
         key={project._id}
-        ref={mediaScrollDivRef}
+        ref={scrollRef}
         className="fixed top-0 pointer-events-auto w-full h-full lg:px-0 lg:py-5 overflow-x-auto overflow-y-hidden lg:flex grid grid-flow-col grid-rows-2 items-center gap-5 snap-x snap-mandatory bg-gray-200 px-5 "
         style={{ WebkitOverflowScrolling: 'touch' }}
 
@@ -122,12 +166,12 @@ export const ProjectMedia = forwardRef<ProjectMediaHandle, Props>(({projects, me
     project.preview.desktopUrl?.includes(".mp4")?
       <div key={project._id} className="fixed top-0 pointer-events-none">
         {/* VIDEOS for both mobile and desktop */}
-        <video width="1920" height="1080" autoPlay muted playsInline loop className={`lg:block hidden w-screen h-screen`}
+        <video width="1920" height="1080" autoPlay muted playsInline loop className={`lg:block hidden w-screen h-screen ${isFading ? 'opacity-0' : 'opacity-100'} ${isBlurry ? 'blur-2xl' : 'blur-none'}`}
           onLoadedData={handleMediaLoaded}
         >
           <source src={project.preview.desktopUrl} type="video/mp4" /> Your browser does not support the video tag.
         </video>
-        <video width="1920" height="1080" autoPlay muted loop playsInline className={`lg:hidden block w-screen h-screen`}
+        <video width="1920" height="1080" autoPlay muted loop playsInline className={`lg:hidden block w-screen h-screen ${isFading ? 'opacity-0' : 'opacity-100'} ${isBlurry ? 'blur-2xl' : 'blur-none'}`}
           onLoadedData={handleMediaLoaded}
         >
           <source src={project.preview.mobileUrl} type="video/mp4" /> Your browser does not support the video tag.
@@ -135,10 +179,10 @@ export const ProjectMedia = forwardRef<ProjectMediaHandle, Props>(({projects, me
       </div>
     : <div key={project._id} className="pointer-events-none">
         {/* IMAGES for both mobile and desktop */}
-        <Image alt="" src={project.preview.desktopUrl || ""} width="1920" height="1080" className={`lg:block hidden w-screen h-screen object-contain`}
+        <Image alt="" src={project.preview.desktopUrl || ""} width="1920" height="1080" className={`lg:block hidden w-screen h-screen object-contain ${isFading ? 'opacity-0' : 'opacity-100'} ${isBlurry ? 'blur-2xl' : 'blur-none'}`}
           onLoad={handleMediaLoaded}
         />
-        <Image alt="" src={project.preview.mobileUrl || ""} width="1920" height="1080" className={`lg:hidden block w-screen h-screen object-contain`}
+        <Image alt="" src={project.preview.mobileUrl || ""} width="1920" height="1080" className={`lg:hidden block w-screen h-screen object-contain ${isFading ? 'opacity-0' : 'opacity-100'} ${isBlurry ? 'blur-2xl' : 'blur-none'}`}
           onLoad={handleMediaLoaded}
         />
       </div>

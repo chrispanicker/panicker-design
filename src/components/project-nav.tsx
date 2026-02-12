@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 'use client'
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { AsciiText, splitClass } from "./ascii"
 import { useEffect, useRef, useState } from "react"
 
@@ -9,9 +9,9 @@ interface Props {
   projects: any
 }
 
-
-
 export const ProjectNav = ({projects}:Props) =>{
+  const searchParams = useSearchParams();
+  const p = searchParams.get('p')? +searchParams.get('p')! : 0;
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   // const searchParams = useSearchParams();
@@ -58,7 +58,7 @@ export const ProjectNav = ({projects}:Props) =>{
                   router.push(`./?p=${i}`, {scroll:false})
                 }}
               >
-                <AsciiText className={`${splitClass} cursor-pointer`} text={project.name} />
+                <AsciiText className={`${splitClass} cursor-pointer ${p === i ? 'bg-blue-500' : ''}`} text={project.name} />
               </div>
             )
           })}

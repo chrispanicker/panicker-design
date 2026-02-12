@@ -9,9 +9,39 @@ export const CustomFoot = () =>{
   const descRef = useRef<HTMLDivElement>(null);
   
 
+  // useEffect(()=>{
+  //   window.scrollTo({left:0, top:0});
+  // })
+
   useEffect(()=>{
-    window.scrollTo({left:0, top:0});
-  })
+    if (!descOpen) return;
+    // Close dropdown if click outside
+    function handleClick(e: MouseEvent){
+      if (descRef.current && !descRef.current.contains(e.target as Node)){
+        setDescOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [descOpen])
+
+  useEffect(()=>{
+    const handleKeyDown = (e: KeyboardEvent) => {
+      //up arrow scrolls to top, down arrow scrolls to bottom
+      if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+        if (window.scrollY < 1000) {
+          window.scrollTo({top: window.innerHeight, behavior: 'smooth'});
+        } else {
+          window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+
+  
   
   useEffect(()=>{
     if (!descOpen) return;

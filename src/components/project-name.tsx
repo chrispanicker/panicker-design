@@ -23,9 +23,9 @@ export function ProjectName({ projects }: Props) {
   const descRef = useRef<HTMLDivElement>(null);
   
 
-  useEffect(()=>{
-    window.scrollTo({left:0, top:0});
-  })
+  // useEffect(()=>{
+  //   window.scrollTo({left:0, top:0});
+  // })
   
   useEffect(()=>{
     if (!descOpen) return;
@@ -39,6 +39,14 @@ export function ProjectName({ projects }: Props) {
     return () => document.removeEventListener("mousedown", handleClick);
   }, [descOpen])
 
+  // useEffect(()=>{
+  //   document.addEventListener("keydown", (e)=> {
+  //     e.key === "ArrowRight" && router.push(`./?p=${projects[p+1]!=null? p+1: 0}`, {scroll:false});
+  //     e.key === "ArrowLeft" && router.push(`./?p=${projects[p-1]!=null? p-1: projects.length-1}`, {scroll:false});
+  //   });
+  // })
+
+
 
 
 
@@ -49,13 +57,15 @@ export function ProjectName({ projects }: Props) {
       </div>
 
       <div className="pointer-events-auto cursor-pointer h-fit flex" onClick={() => setDescOpen(!descOpen)}>
-        <button className={`pointer-events-auto bg-black px-2 hover:bg-blue-500`} onClick={()=>{
+        <button className={`pointer-events-auto bg-black px-2 hover:bg-blue-500`} onClick={(e)=>{
+          e.stopPropagation();
           router.push(`./?p=${projects[p-1]!=null? p-1: projects.length-1}`, {scroll:false})  
         }}> &larr;</button>
         <div ref={descRef}>
           <AsciiText className = {`${splitClass} pointer-events-auto`} text={`${project.name}`}/>
         </div>
-        <button className={`pointer-events-auto bg-black px-2 hover:bg-blue-500`} onClick={()=>{
+        <button className={`pointer-events-auto bg-black px-2 hover:bg-blue-500`} onClick={(e)=>{
+          e.stopPropagation();
           router.push(`./?p=${projects[p+1]!=null? p+1: 0}`, {scroll:false})  
         }}> &rarr;</button>
       </div>
