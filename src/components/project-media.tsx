@@ -100,10 +100,62 @@ export const ProjectMedia = forwardRef<ProjectMediaHandle, Props>(({projects, me
     e.currentTarget.classList.replace("blur-2xl", "blur-none");
   };
 
-  const mediaClass = `max-w-[90vw] lg:max-h-[90vh] max-h-[50vh] h-auto z-0 transition-all duration-300 odd:self-end even:self-start ${isFading ? 'opacity-0' : 'opacity-100'} ${isBlurry ? 'blur-2xl' : 'blur-none'}`;
+  const mediaClass = `max-w-[90vw] lg:max-h-[90vh] max-h-[50vh] h-auto z-0 transition-all duration-300 lg:odd:self-auto lg:even:self-auto odd:self-end even:self-start ${isFading ? 'opacity-0' : 'opacity-100'} ${isBlurry ? 'blur-2xl' : 'blur-none'}`;
+  
+  // Loading animation component
+  const LoadingScreen = () => {
+    const [animatingChars, setAnimatingChars] = useState<{[key: number]: number}>({});
+    
+    useEffect(() => {
+      const text = "LOADING";
+      const chars = text.split("");
+      
+      // Start each character's animation in a staggered way
+      const intervals: NodeJS.Timeout[] = [];
+      const valArray = [".", ".", "=", "÷", "*"];
+      
+      chars.forEach((_, idx) => {
+        // Stagger the start of each character's animation
+        const timeout = setTimeout(() => {
+          let i = 0;
+          const interval = setInterval(() => {
+            setAnimatingChars(prev => ({...prev, [idx]: i}));
+            i = (i + 1) % valArray.length;
+          }, 200);
+          intervals.push(interval);
+        }, idx * 100);
+        
+        return () => clearTimeout(timeout);
+      });
+      
+      return () => {
+        intervals.forEach(interval => clearInterval(interval));
+      };
+    }, []);
+    
+    const valArray = [".", ".", "=", "÷", "*"];
+    const text = "LOADING";
+    
+    return (
+      <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-200 z-50 transition-opacity duration-300" 
+           style={{opacity: isBlurry ? 1 : 0, pointerEvents: isBlurry ? 'auto' : 'none'}}>
+        <div className="text-center">
+          <div className="text-4xl lg:text-6xl font-bold bg-black px-6 py-4 flex gap-1">
+            {text.split("").map((char, idx) => (
+              <span key={idx} className="w-12 lg:w-16 text-center">
+                {animatingChars[idx] !== undefined ? valArray[animatingChars[idx]] : char}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  };
   if (project.useGallery && Array.isArray(project.gallery) && project.gallery.length > 0) {
     // Render gallery (show all items stacked, or you can implement a slider if desired)
     return (
+      <>
+      <LoadingScreen />
       <div
       id="proj-media"
         key={project._id}
@@ -163,12 +215,15 @@ export const ProjectMedia = forwardRef<ProjectMediaHandle, Props>(({projects, me
           return null;
         })}
       </div>
+      </>
     );
   }
 
   // Fallback: single preview block
   return(
-    project.preview.desktopUrl?.includes(".mp4")?
+    project.preview?.desktopUrl?.includes(".mp4")?
+      <>
+      <LoadingScreen />
       <div key={project._id} className="fixed top-0 pointer-events-none">
         {/* VIDEOS for both mobile and desktop */}
         <video width="1920" height="1080" autoPlay muted playsInline loop className={`lg:block hidden w-screen h-screen ${isFading ? 'opacity-0' : 'opacity-100'} ${isBlurry ? 'blur-2xl' : 'blur-none'}`}
@@ -182,14 +237,18 @@ export const ProjectMedia = forwardRef<ProjectMediaHandle, Props>(({projects, me
           <source src={project.preview.mobileUrl} type="video/mp4" /> Your browser does not support the video tag.
         </video>
       </div>
-    : <div key={project._id} className="pointer-events-none">
+      </>
+    : <>
+    <LoadingScreen />
+    <div key={project._id} className="pointer-events-none">
         {/* IMAGES for both mobile and desktop */}
-        <Image alt="" src={project.preview.desktopUrl || ""} width="1920" height="1080" className={`lg:block hidden w-screen h-screen object-contain ${isFading ? 'opacity-0' : 'opacity-100'} ${isBlurry ? 'blur-2xl' : 'blur-none'}`}
+        <Image alt="" src={project.preview?.desktopUrl || ""} width="1920" height="1080" className={`lg:block hidden w-screen h-screen object-contain ${isFading ? 'opacity-0' : 'opacity-100'} ${isBlurry ? 'blur-2xl' : 'blur-none'}`}
           onLoad={handleMediaLoaded}
         />
-        <Image alt="" src={project.preview.mobileUrl || ""} width="1920" height="1080" className={`lg:hidden block w-screen h-screen object-contain ${isFading ? 'opacity-0' : 'opacity-100'} ${isBlurry ? 'blur-2xl' : 'blur-none'}`}
+        <Image alt="" src={project.preview?.mobileUrl || ""} width="1920" height="1080" className={`lg:hidden block w-screen h-screen object-contain ${isFading ? 'opacity-0' : 'opacity-100'} ${isBlurry ? 'blur-2xl' : 'blur-none'}`}
           onLoad={handleMediaLoaded}
         />
       </div>
+    </>
   );
 });

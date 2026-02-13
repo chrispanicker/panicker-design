@@ -48,7 +48,6 @@ export const ProjectNav = ({projects}:Props) =>{
 
       if(e.code === "Space"){
         setDropdownOpen(!dropdownOpen);
-        // console.log("hey")
       }
     
       if(e.key ==="ArrowDown" && dropdownOpen){ 
