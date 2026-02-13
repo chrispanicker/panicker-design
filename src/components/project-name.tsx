@@ -59,7 +59,7 @@ export function ProjectName({ projects }: Props) {
         }}> &rarr;</button>
       </div>
 
-      <div className={`flex lg:hidden snap-end w-1/2 overflow-hidden transition-all duration-300 ${descOpen ? "opacity-100 blur-none" : "opacity-0 blur-2xl"}`}>        
+      <div className={`flex lg:hidden snap-end w-3/4 overflow-hidden transition-all duration-300 ${descOpen ? "opacity-100 blur-none" : "opacity-0 blur-2xl"}`}>        
         <p className={`p-5 pointer-events-auto bg-black`}>{String(project.description ?? "")}</p>
       </div>
     </section>

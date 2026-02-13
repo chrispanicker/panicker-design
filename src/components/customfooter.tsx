@@ -63,7 +63,7 @@ export const CustomFoot = () =>{
       </section>
 
       <section id="about" className="snap-start w-full h-fit flex flex-col justify-end items-end px-5 backdrop-blur-2xl lg:py-5 pb-15 pt-5 pointer-events-auto">
-        <div className="justify-items-end">
+        <div className="justify-items-end flex flex-col items-end justify-end">
           <AsciiText className={`${splitClass}`} text = "Hi, my name is Chris." />
           <AsciiText className={`${splitClass}`} text = "I am a senior designer for" />
           <AsciiText className={`${splitClass}`} text = "Pitchfork and GQ." />

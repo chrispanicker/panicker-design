@@ -68,8 +68,8 @@ export const ProjectNav = ({projects}:Props) =>{
         <button onClick={()=>{
           setDropdownOpen(!dropdownOpen)
         }}
-        className="hover:bg-blue-500 flex justify-center items-center bg-black lg:p-4 p-2 lg:h-18 h-9 w-auto cursor-pointer pointer-events-auto">
-        <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="100%" height="100%" fill="#ededed">
+        className="hover:bg-blue-500 flex justify-center items-center bg-black lg:p-4 p-2 lg:h-18 cursor-pointer pointer-events-auto">
+        <svg className={"w-full h-full"}  viewBox="0 0 64 64" width="1.3rem" height="1.3rem" fill="#ededed">
           <rect width="64" height="12.25"/><rect y="25.88" width="64" height="12.25"/><rect y="51.75" width="64" height="12.25"/>
         </svg>
         </button>

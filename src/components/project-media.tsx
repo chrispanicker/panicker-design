@@ -100,7 +100,7 @@ export const ProjectMedia = forwardRef<ProjectMediaHandle, Props>(({projects, me
     e.currentTarget.classList.replace("blur-2xl", "blur-none");
   };
 
-  const mediaClass = `max-w-[90vw] lg:max-h-[90vh] max-h-[50vh] h-auto z-0 transition-all duration-300 lg:odd:self-auto lg:even:self-auto odd:self-end even:self-start ${isFading ? 'opacity-0' : 'opacity-100'} ${isBlurry ? 'blur-2xl' : 'blur-none'}`;
+  const mediaClass = `max-w-[90vw] lg:max-h-[90vh] max-h-[50vh] h-auto z-0 transition-all duration-300 ${isFading ? 'opacity-0' : 'opacity-100'} ${isBlurry ? 'blur-2xl' : 'blur-none'}`;
   
   // Loading animation component
   const LoadingScreen = () => {
@@ -160,7 +160,7 @@ export const ProjectMedia = forwardRef<ProjectMediaHandle, Props>(({projects, me
       id="proj-media"
         key={project._id}
         ref={scrollRef}
-        className="fixed top-0 pointer-events-auto w-full h-full lg:px-0 lg:py-5 overflow-x-auto overflow-y-hidden lg:flex grid grid-flow-col grid-rows-2 items-center gap-5 snap-x snap-mandatory bg-gray-200 px-5 "
+        className="fixed top-0 pointer-events-auto w-full h-full lg:px-0 lg:py-5 overflow-x-auto overflow-y-hidden flex items-center gap-5 snap-x snap-mandatory bg-gray-200 px-5 "
         style={{ WebkitOverflowScrolling: 'touch' }}
 
       >
