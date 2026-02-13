@@ -33,9 +33,13 @@ export const ProjectNav = ({projects}:Props) =>{
       }
 
     })
-
+    // document.querySelector("html, body")?.classList.toggle("overflow-hidden")
     return () => document.removeEventListener("mousedown", handleClick);
   }, [dropdownOpen])
+
+  // useEffect(()=>{
+  //   document.querySelector("html, body")?.classList.remove("overflow-hidden")
+  // }, [!dropdownOpen])
 
   useEffect(()=>{
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -44,10 +48,14 @@ export const ProjectNav = ({projects}:Props) =>{
           e.preventDefault();
       }
 
-      dropdownOpen? document.querySelector("html, body")?.classList.add("overflow-hidden"): document.querySelector("html, body")?.classList.remove("overflow-hidden");
 
       if(e.code === "Space"){
         setDropdownOpen(!dropdownOpen);
+        if(!dropdownOpen){
+          document.querySelector("html, body")?.classList.add("overflow-hidden")
+        }else{
+          document.querySelector("html, body")?.classList.remove("overflow-hidden")
+        }
       }
     
       if(e.key ==="ArrowDown" && dropdownOpen){ 
@@ -64,16 +72,21 @@ export const ProjectNav = ({projects}:Props) =>{
     <div className="fixed top-0 flex justify-between items-start w-screen z-10 p-5 w-full">
 
       {/* dropdown for projects */}
-      <div ref={dropdownRef} className="fixed top-5 right-5 flex flex-col justify-center items-end z-[1000]">
+      <div ref={dropdownRef} className={`fixed top-5 right-5 flex flex-col justify-center items-end z-[1000] ${dropdownOpen ? 'pointer-events-auto' : 'pointer-events-none'}`}>
         <button onClick={()=>{
           setDropdownOpen(!dropdownOpen)
+          if(!dropdownOpen){
+            document.querySelector("html, body")?.classList.add("overflow-hidden")
+          }else{
+            document.querySelector("html, body")?.classList.remove("overflow-hidden")
+          }
         }}
         className="hover:bg-blue-500 flex justify-center items-center bg-black lg:p-4 p-2 lg:h-18 cursor-pointer pointer-events-auto">
         <svg className={"w-full h-full"}  viewBox="0 0 64 64" width="1.3rem" height="1.3rem" fill="#ededed">
           <rect width="64" height="12.25"/><rect y="25.88" width="64" height="12.25"/><rect y="51.75" width="64" height="12.25"/>
         </svg>
         </button>
-        <div className={`absolute top-full right-0 flex flex-col justify-start items-end w-max overflow-visible pointer-events-auto`}>
+        <div className={`absolute top-full right-0 flex flex-col justify-start items-end w-max overflow-visible ${dropdownOpen ? 'pointer-events-auto' : 'pointer-events-none'}`}>
           {projects.map((project:any, i:number)=>{
             const delay = dropdownOpen? `${i * 60}ms` : '0ms';
             return (

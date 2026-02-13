@@ -41,8 +41,8 @@ export function ProjectName({ projects }: Props) {
 
   return(
     <section id="proj-description" className="z-[10] fixed lg:bottom-0 lg:top-auto top-0 left-0 w-full h-max flex flex-col lg:justify-end justify-start items-start py-5 px-5 pointer-events-none">
-      <div className={`lg:flex hidden snap-end w-1/2 overflow-hidden transition-all duration-300 ${descOpen ? "opacity-100 blur-none" : "opacity-0 blur-2xl"}`}>        
-        <p className={`p-5 pointer-events-auto bg-black`}>{String(project.description ?? "")}</p>
+      <div className={`lg:flex hidden snap-end w-3/4 overflow-hidden transition-all duration-300 pointer-events-none ${descOpen ? "opacity-100 blur-none" : "opacity-0 blur-2xl"}`}>        
+        <p className={`p-5 pointer-events-none bg-black`}>{String(project.description ?? "")}</p>
       </div>
 
       <div className="pointer-events-auto cursor-pointer h-fit flex" onClick={() => setDescOpen(!descOpen)}>
@@ -50,17 +50,18 @@ export function ProjectName({ projects }: Props) {
           e.stopPropagation();
           router.push(`./?p=${projects[p-1]!=null? p-1: projects.length-1}`, {scroll:false})  
         }}> &larr;</button>
-        <div ref={descRef}>
-          <AsciiText className = {`${splitClass} pointer-events-auto`} text={`${project.name}`}/>
-        </div>
         <button className={`pointer-events-auto bg-black px-2 hover:bg-blue-500`} onClick={(e)=>{
           e.stopPropagation();
           router.push(`./?p=${projects[p+1]!=null? p+1: 0}`, {scroll:false})  
         }}> &rarr;</button>
+        <div ref={descRef}>
+          <AsciiText className = {`${splitClass} pointer-events-auto`} text={`${project.name}`}/>
+        </div>
+
       </div>
 
       <div className={`flex lg:hidden snap-end w-3/4 overflow-hidden transition-all duration-300 ${descOpen ? "opacity-100 blur-none" : "opacity-0 blur-2xl"}`}>        
-        <p className={`p-5 pointer-events-auto bg-black`}>{String(project.description ?? "")}</p>
+        <p className={`p-5 pointer-events-none bg-black`}>{String(project.description ?? "")}</p>
       </div>
     </section>
   )

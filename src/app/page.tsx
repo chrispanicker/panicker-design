@@ -25,7 +25,7 @@ export default async function Home() {
         <ProjectMedia projects={projects} />
       </Suspense>
     </div>
-    <div className="block w-full h-screen pointer-events-auto snap-end snap-always overscroll-none">
+    <div className="block w-full h-screen pointer-events-auto snap-end snap-always overscroll-none bg-gray-300">
       <CustomFoot/>
     </div>
   </>

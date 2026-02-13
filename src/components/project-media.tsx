@@ -38,10 +38,27 @@ export const ProjectMedia = forwardRef<ProjectMediaHandle, Props>(({projects, me
     const [isFading, setIsFading] = useState(true);
     ProjectMedia.displayName = "ProjectMedia";
   const [isBlurry, setIsBlurry] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadedGalleryItems, setLoadedGalleryItems] = useState<Set<number>>(new Set());
   
   // Fallback ref if not provided from parent
   const fallbackRef = useRef<HTMLDivElement>(null);
   const scrollRef = mediaScrollDivRef || fallbackRef;
+
+  // Reset loaded items when project changes
+  useEffect(() => {
+    setLoadedGalleryItems(new Set());
+    setIsLoading(true);
+    setIsBlurry(true);
+    
+    // Fallback timeout: unblur after 3 seconds even if not all items loaded
+    const timeout = setTimeout(() => {
+      setIsLoading(false);
+      // Keep blurry, will unblur after fade-in
+    }, 3000);
+    
+    return () => clearTimeout(timeout);
+  }, [p]);
 
   useEffect(()=>{
     //LR arrow keys slide the media gallery  L / R
@@ -93,21 +110,50 @@ export const ProjectMedia = forwardRef<ProjectMediaHandle, Props>(({projects, me
 
   // When project changes, reset fade/blurry
   // Unblur when content is loaded
-  const handleMediaLoaded = (e: React.SyntheticEvent<HTMLVideoElement | HTMLImageElement>) => {
-    setIsFading(false);
-    setIsBlurry(false);
+  const handleMediaLoaded = (e: React.SyntheticEvent<HTMLVideoElement | HTMLImageElement>, itemIdx?: number) => {
     // Remove blur-2xl if present
     e.currentTarget.classList.replace("blur-2xl", "blur-none");
+    
+    // For gallery items, track which ones have loaded
+    if (itemIdx !== undefined && project.useGallery) {
+      setLoadedGalleryItems(prev => {
+        const newSet = new Set([...prev, itemIdx]);
+        // Check if all gallery items are loaded
+        const totalItems = Array.isArray(project.gallery) ? project.gallery.length : 0;
+        if (newSet.size >= totalItems) {
+          setIsLoading(false);
+        }
+        return newSet;
+      });
+    } else {
+      // For preview (single) media
+      setIsLoading(false);
+    }
   };
 
-  const mediaClass = `max-w-[90vw] lg:max-h-[90vh] max-h-[50vh] h-auto z-0 transition-all duration-300 ${isFading ? 'opacity-0' : 'opacity-100'} ${isBlurry ? 'blur-2xl' : 'blur-none'}`;
+  // Handle fade-in and unblur after loading completes
+  useEffect(() => {
+    if (!isLoading) {
+      // Loading screen is fading out, fade in gallery
+      setIsFading(false);
+      
+      // Unblur after fade-in completes
+      const unblurTimeout = setTimeout(() => {
+        setIsBlurry(false);
+      }, 500); // Match the gallery transition duration
+      
+      return () => clearTimeout(unblurTimeout);
+    }
+  }, [isLoading]);
+
+  const mediaClass = `max-w-[90vw] lg:max-h-[90vh] max-h-[50vh] h-auto z-0 transition-all duration-500 ${isFading ? 'opacity-0' : 'opacity-100'} ${isBlurry ? 'blur-2xl' : 'blur-none'}`;
   
   // Loading animation component
   const LoadingScreen = () => {
     const [animatingChars, setAnimatingChars] = useState<{[key: number]: number}>({});
     
     useEffect(() => {
-      const text = "LOADING";
+      const text = ".=+.=.|";
       const chars = text.split("");
       
       // Start each character's animation in a staggered way
@@ -121,7 +167,7 @@ export const ProjectMedia = forwardRef<ProjectMediaHandle, Props>(({projects, me
           const interval = setInterval(() => {
             setAnimatingChars(prev => ({...prev, [idx]: i}));
             i = (i + 1) % valArray.length;
-          }, 200);
+          }, 100);
           intervals.push(interval);
         }, idx * 100);
         
@@ -134,13 +180,13 @@ export const ProjectMedia = forwardRef<ProjectMediaHandle, Props>(({projects, me
     }, []);
     
     const valArray = [".", ".", "=", "÷", "*"];
-    const text = "LOADING";
+    const text = ".=+.=.|";
     
     return (
       <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-200 z-50 transition-opacity duration-300" 
-           style={{opacity: isBlurry ? 1 : 0, pointerEvents: isBlurry ? 'auto' : 'none'}}>
+           style={{opacity: isLoading ? 1 : 0, pointerEvents: isLoading ? 'auto' : 'none'}}>
         <div className="text-center">
-          <div className="text-4xl lg:text-6xl font-bold bg-black px-6 py-4 flex gap-1">
+          <div className="text-4xl lg:text-6xl font-bold bg-black px-6 py-4 flex">
             {text.split("").map((char, idx) => (
               <span key={idx} className="w-12 lg:w-16 text-center">
                 {animatingChars[idx] !== undefined ? valArray[animatingChars[idx]] : char}
@@ -160,8 +206,8 @@ export const ProjectMedia = forwardRef<ProjectMediaHandle, Props>(({projects, me
       id="proj-media"
         key={project._id}
         ref={scrollRef}
-        className="fixed top-0 pointer-events-auto w-full h-full lg:px-0 lg:py-5 overflow-x-auto overflow-y-hidden flex items-center gap-5 snap-x snap-mandatory bg-gray-200 px-5 "
-        style={{ WebkitOverflowScrolling: 'touch' }}
+        className="fixed top-0 pointer-events-auto w-full h-full lg:px-0 lg:py-5 overflow-x-auto overflow-y-hidden flex items-center gap-5 snap-x snap-mandatory bg-gray-200 px-5 transition-opacity duration-500"
+        style={{ WebkitOverflowScrolling: 'touch', opacity: !isLoading ? 1 : 0 }}
 
       >
         {project.gallery.map((media: unknown, idx: number) => {
@@ -190,7 +236,7 @@ export const ProjectMedia = forwardRef<ProjectMediaHandle, Props>(({projects, me
                   playsInline
                   loop
                   className={`${mediaClass} snap-center `}
-                  onLoadedData={handleMediaLoaded}
+                  onLoadedData={(e) => handleMediaLoaded(e, idx)}
                   style={{ objectFit: 'contain' }}
                 >
                   {videoUrl && <source src={videoUrl} type="video/mp4" />}
@@ -207,7 +253,7 @@ export const ProjectMedia = forwardRef<ProjectMediaHandle, Props>(({projects, me
                   width={1920}
                   height={1080}
                   className={`${mediaClass} object-contain snap-center `}
-                  onLoad={handleMediaLoaded}
+                  onLoad={(e) => handleMediaLoaded(e, idx)}
                 />
               );
             }
@@ -224,14 +270,14 @@ export const ProjectMedia = forwardRef<ProjectMediaHandle, Props>(({projects, me
     project.preview?.desktopUrl?.includes(".mp4")?
       <>
       <LoadingScreen />
-      <div key={project._id} className="fixed top-0 pointer-events-none">
+      <div key={project._id} className="pointer-events-none">
         {/* VIDEOS for both mobile and desktop */}
-        <video width="1920" height="1080" autoPlay muted playsInline loop className={`lg:block hidden w-screen h-screen ${isFading ? 'opacity-0' : 'opacity-100'} ${isBlurry ? 'blur-2xl' : 'blur-none'}`}
+        <video width="1920" height="1080" autoPlay muted playsInline loop className={`lg:block hidden w-screen h-auto transition-all duration-500 ${isFading ? 'opacity-0' : 'opacity-100'} ${isBlurry ? 'blur-2xl' : 'blur-none'}`}
           onLoadedData={handleMediaLoaded}
         >
           <source src={project.preview.desktopUrl} type="video/mp4" /> Your browser does not support the video tag.
         </video>
-        <video width="1920" height="1080" autoPlay muted loop playsInline className={`lg:hidden block w-screen h-screen ${isFading ? 'opacity-0' : 'opacity-100'} ${isBlurry ? 'blur-2xl' : 'blur-none'}`}
+        <video width="1920" height="1080" autoPlay muted loop playsInline className={`lg:hidden block w-screen h-auto transition-all duration-500 ${isFading ? 'opacity-0' : 'opacity-100'} ${isBlurry ? 'blur-2xl' : 'blur-none'}`}
           onLoadedData={handleMediaLoaded}
         >
           <source src={project.preview.mobileUrl} type="video/mp4" /> Your browser does not support the video tag.
@@ -242,10 +288,10 @@ export const ProjectMedia = forwardRef<ProjectMediaHandle, Props>(({projects, me
     <LoadingScreen />
     <div key={project._id} className="pointer-events-none">
         {/* IMAGES for both mobile and desktop */}
-        <Image alt="" src={project.preview?.desktopUrl || ""} width="1920" height="1080" className={`lg:block hidden w-screen h-screen object-contain ${isFading ? 'opacity-0' : 'opacity-100'} ${isBlurry ? 'blur-2xl' : 'blur-none'}`}
+        <Image alt="" src={project.preview?.desktopUrl || ""} width="1920" height="1080" className={`lg:block hidden w-screen h-auto object-cover ${isFading ? 'opacity-0' : 'opacity-100'} ${isBlurry ? 'blur-2xl' : 'blur-none'}`}
           onLoad={handleMediaLoaded}
         />
-        <Image alt="" src={project.preview?.mobileUrl || ""} width="1920" height="1080" className={`lg:hidden block w-screen h-screen object-contain ${isFading ? 'opacity-0' : 'opacity-100'} ${isBlurry ? 'blur-2xl' : 'blur-none'}`}
+        <Image alt="" src={project.preview?.mobileUrl || ""} width="1920" height="1080" className={`lg:hidden block w-screen h-auto object-cover ${isFading ? 'opacity-0' : 'opacity-100'} ${isBlurry ? 'blur-2xl' : 'blur-none'}`}
           onLoad={handleMediaLoaded}
         />
       </div>
