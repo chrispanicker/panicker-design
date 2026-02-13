@@ -46,13 +46,10 @@ export const ProjectMedia = forwardRef<ProjectMediaHandle, Props>(({projects, me
   useEffect(()=>{
     //LR arrow keys slide the media gallery  L / R
     const handleKeyDown = (e: KeyboardEvent) => {
-      console.log("key pressed:", e.key, "useGallery:", project.useGallery, "ref:", scrollRef?.current);
       if (project.useGallery && scrollRef?.current) {
-        if (e.key === "ArrowRight") {
-          console.log("scrolling right");
+        if (e.key === "ArrowRight" || e.key === "d") {
           scrollRef.current.scrollBy({ left: 100, behavior: 'smooth' });
-        } else if (e.key === "ArrowLeft") {
-          console.log("scrolling left");
+        } else if (e.key === "ArrowLeft" || e.key === "a") {
           scrollRef.current.scrollBy({ left: -100, behavior: 'smooth' });
         }
       }

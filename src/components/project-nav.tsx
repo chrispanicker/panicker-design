@@ -27,8 +27,39 @@ export const ProjectNav = ({projects}:Props) =>{
       }
     }
     document.addEventListener("mousedown", handleClick);
+    document.addEventListener("keydown", (e) => {
+      if(e.key === "Escape"){
+        setDropdownOpen(false);
+      }
+
+    })
+
     return () => document.removeEventListener("mousedown", handleClick);
   }, [dropdownOpen])
+
+  useEffect(()=>{
+    const handleKeyDown = (e: KeyboardEvent) => {
+
+      if(["Space","ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].indexOf(e.code) > -1) {
+          e.preventDefault();
+      }
+
+      dropdownOpen? document.querySelector("html, body")?.classList.add("overflow-hidden"): document.querySelector("html, body")?.classList.remove("overflow-hidden");
+
+      if(e.code === "Space"){
+        setDropdownOpen(!dropdownOpen);
+        // console.log("hey")
+      }
+    
+      if(e.key ==="ArrowDown" && dropdownOpen){ 
+        router.push(`./?p=${p+1 < projects.length? p+1: 0}`, {scroll:false})
+      }else if (e.key==="ArrowUp" && dropdownOpen){ 
+        router.push(`./?p=${p-1 >= 0? p-1: projects.length-1}`, {scroll:false})
+      }
+    }
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown); 
+  })
 
   return(        
     <div className="fixed top-0 flex justify-between items-start w-screen z-10 p-5 w-full">
@@ -39,9 +70,9 @@ export const ProjectNav = ({projects}:Props) =>{
           setDropdownOpen(!dropdownOpen)
         }}
         className="hover:bg-blue-500 flex justify-center items-center bg-black lg:p-4 p-2 lg:h-18 h-9 w-auto cursor-pointer pointer-events-auto">
-          <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="100%" height="100%" fill="#ededed">
-            <rect width="64" height="12.25"/><rect y="25.88" width="64" height="12.25"/><rect y="51.75" width="64" height="12.25"/>
-          </svg>
+        <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="100%" height="100%" fill="#ededed">
+          <rect width="64" height="12.25"/><rect y="25.88" width="64" height="12.25"/><rect y="51.75" width="64" height="12.25"/>
+        </svg>
         </button>
         <div className={`absolute top-full right-0 flex flex-col justify-start items-end w-max overflow-visible pointer-events-auto`}>
           {projects.map((project:any, i:number)=>{
@@ -49,6 +80,7 @@ export const ProjectNav = ({projects}:Props) =>{
             return (
               <div
                 key={project._id}
+                id={`${i}`}
                 className={`transition-all ease-in-out 
                   ${dropdownOpen ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 -translate-y-10 pointer-events-none'}
                 `}

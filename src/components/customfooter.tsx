@@ -29,11 +29,11 @@ export const CustomFoot = () =>{
     const handleKeyDown = (e: KeyboardEvent) => {
       //up arrow scrolls to top, down arrow scrolls to bottom
 
-    if(["Space","ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].indexOf(e.code) > -1) {
-        e.preventDefault();
-    }
+      if(["Space","ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].indexOf(e.code) > -1) {
+          e.preventDefault();
+      }
 
-      if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+      if (e.key === "ArrowDown" || e.key === "ArrowUp" || e.key === "w" || e.key === "s") {
         if (window.scrollY < 100) {
           window.scrollTo({top: window.innerHeight, behavior: 'smooth'});
         } else {
@@ -44,9 +44,6 @@ export const CustomFoot = () =>{
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
-
-
-  
   
   useEffect(()=>{
     if (!descOpen) return;
@@ -59,6 +56,7 @@ export const CustomFoot = () =>{
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
   }, [descOpen])
+
   return (
     <>
       <section id="padding" className="snap-end snap-always w-full h-screen flex flex-col justify-end items-start py-5 px-5 pointer-events-none">

@@ -39,13 +39,6 @@ export function ProjectName({ projects }: Props) {
     return () => document.removeEventListener("mousedown", handleClick);
   }, [descOpen])
 
-  // useEffect(()=>{
-  //   document.addEventListener("keydown", (e)=> {
-  //     e.key === "ArrowRight" && router.push(`./?p=${projects[p+1]!=null? p+1: 0}`, {scroll:false});
-  //     e.key === "ArrowLeft" && router.push(`./?p=${projects[p-1]!=null? p-1: projects.length-1}`, {scroll:false});
-  //   });
-  // })
-
   return(
     <section id="proj-description" className="z-[10] fixed lg:bottom-0 lg:top-auto top-0 left-0 w-full h-max flex flex-col lg:justify-end justify-start items-start py-5 px-5 pointer-events-none">
       <div className={`lg:flex hidden snap-end w-1/2 overflow-hidden transition-all duration-300 ${descOpen ? "opacity-100 blur-none" : "opacity-0 blur-2xl"}`}>        
