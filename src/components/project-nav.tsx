@@ -100,6 +100,7 @@ export const ProjectNav = ({projects}:Props) =>{
                 onClick={()=>{
                   setDropdownOpen(false);
                   router.push(`./?p=${i}`, {scroll:false})
+                  document.querySelector("html, body")?.classList.remove("overflow-hidden")
                 }}
               >
                 <AsciiText className={`${splitClass} cursor-pointer ${p === i ? 'bg-blue-500' : ''}`} text={project.name} />
